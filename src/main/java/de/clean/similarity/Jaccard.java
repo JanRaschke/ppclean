@@ -18,7 +18,9 @@ public class Jaccard implements StringSimilarity {
     }
 
     /**
-     * Calculates Jaccard String similarity for x and y, using ngrams of length {@link #n}
+     * Calculates Jaccard String similarity for x and y, using ngrams of length
+     * {@link #n}
+     *
      * @param x
      * @param y
      * @return Similarity score in range [0,1]
@@ -29,8 +31,19 @@ public class Jaccard implements StringSimilarity {
         Set<String> ngramsX = new HashSet<>();
         Set<String> ngramsY = new HashSet<>();
         // BEGIN SOLUTION
+        //populate the two hashSets
+        for (int i = 0; i <= x.length() - n; i++) {
+            ngramsX.add(x.substring(i, i + n));
+        }
+        for (int i = 0; i <= y.length() - n; i++) {
+            ngramsY.add(y.substring(i, i + n));
+        }
 
-
+        for (String s : ngramsX) {
+            if (ngramsY.contains(s)) {
+                res++;
+            }
+        }
 
         // END SOLUTION
         return res;
