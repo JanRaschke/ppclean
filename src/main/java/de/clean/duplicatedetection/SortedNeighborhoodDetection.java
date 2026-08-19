@@ -6,6 +6,7 @@ import de.clean.data.Record;
 import de.clean.similarity.RecordSimilarity;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -41,9 +42,19 @@ public class SortedNeighborhoodDetection implements DuplicateDetection {
         Set<Duplicate> duplicates = new HashSet<>();
         int numComparisons = 0;
         // BEGIN SOLUTION
-
-
-
+        table.generateKeys(this.keyComponents);
+        table.sortByKey();
+        List<Record> records = table.getData();
+        for (int i = 0; i < records.size(); i++) {
+            for (int j = i + 1; j < Math.min(records.size(), i + windowSize); j++) {
+                Record r1 = records.get(i);
+                Record r2 = records.get(j);
+                numComparisons++;
+                if (recSim.compare(r1, r2) >= threshold) {
+                    duplicates.add(new Duplicate(r1, r2));
+                }
+            }
+        }
         // END SOLUTION
         System.out.printf("Sorted Neighborhood Detection found %d duplicates after %d comparisons%n", duplicates.size(), numComparisons);
         return duplicates;

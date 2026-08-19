@@ -122,9 +122,7 @@ public class Table {
      */
     public void sortByKey() {
         // BEGIN SOLUTION
-
-
-
+        this.data.sort((r1, r2) -> r1.getKey().compareTo(r2.getKey()));
         // END SOLUTION
     }
 

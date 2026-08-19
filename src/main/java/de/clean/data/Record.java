@@ -32,9 +32,17 @@ public class Record {
     public void generateKey(int[] keyComponents) {
         StringBuilder key = new StringBuilder();
         // BEGIN SOLUTION
-
-
-
+        for (int i = 0; i < keyComponents.length && i < content.size(); i++) {
+            int numChars = keyComponents[i];
+            if (numChars > 0) {
+                String val = content.get(i);
+                if (val != null) {
+                    String cleanVal = val.replaceAll("\\s+", "");
+                    int take = Math.min(numChars, cleanVal.length());
+                    key.append(cleanVal.substring(0, take));
+                }
+            }
+        }
         // END SOLUTION
         this.key = key.toString();
     }
