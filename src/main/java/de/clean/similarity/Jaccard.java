@@ -39,11 +39,16 @@ public class Jaccard implements StringSimilarity {
             ngramsY.add(y.substring(i, i + n));
         }
 
+        //calc intersection between both sets
+        double intersection = 0;
+
         for (String s : ngramsX) {
             if (ngramsY.contains(s)) {
-                res++;
+                intersection++;
             }
         }
+        //calc Jaccard String Similarity
+        res = intersection / (ngramsX.size() + ngramsY.size() - intersection);
 
         // END SOLUTION
         return res;
