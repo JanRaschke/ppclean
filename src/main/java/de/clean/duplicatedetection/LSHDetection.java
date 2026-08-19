@@ -1,11 +1,16 @@
 package de.clean.duplicatedetection;
 
-import de.clean.data.Duplicate;
-import de.clean.data.Table;
-import de.clean.data.Record;
-import de.clean.similarity.RecordSimilarity;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
 
-import java.util.*;
+import de.clean.Helper;
+import de.clean.data.Duplicate;
+import de.clean.data.Record;
+import de.clean.data.Table;
+import de.clean.similarity.RecordSimilarity;
 
 public class LSHDetection implements DuplicateDetection {
 
@@ -29,7 +34,8 @@ public class LSHDetection implements DuplicateDetection {
      * @param tokenSize Number of characters per token
      * @param numMinHashs Number of min hashes
      * @param numBands Number of bands
-     * @param threshold Similarity threshold between 0 and 1 to use for filtering duplicates
+     * @param threshold Similarity threshold between 0 and 1 to use for
+     * filtering duplicates
      */
     public LSHDetection(int tokenSize, int numMinHashs, int numBands, double threshold) {
         if (numMinHashs % numBands != 0) {
@@ -42,33 +48,100 @@ public class LSHDetection implements DuplicateDetection {
     }
 
     /**
-     * Calculates {@link LSHDetection#tokenUniverse}: a list of all tokens in the entire table
-     * and {@link LSHDetection#tokenMatrix}: a boolean matrix with as many rows as there are tokens in
-     * the tokenUniverse and as many columns as there are records in the table. A true boolean value in
-     * cell (i, j) means that the i-th token appears in the j-th record.
-     * The size of tokens is determined by {@link LSHDetection#tokenSize}.
+     * Calculates {@link LSHDetection#tokenUniverse}: a list of all tokens in
+     * the entire table and {@link LSHDetection#tokenMatrix}: a boolean matrix
+     * with as many rows as there are tokens in the tokenUniverse and as many
+     * columns as there are records in the table. A true boolean value in cell
+     * (i, j) means that the i-th token appears in the j-th record. The size of
+     * tokens is determined by {@link LSHDetection#tokenSize}.
+     *
      * @param table Table to use to calculate tokens
      */
     private void calculateTokens(Table table) {
         // BEGIN SOLUTION
+        this.tokenUniverse = new ArrayList<>();
+        for (Record r : table.getData()) {
+            String recordString = r.toString();
 
+            for (int i = 0; i <= recordString.length() - tokenSize; i++) {
+                String token = recordString.substring(i, i + tokenSize);
+                if (!this.tokenUniverse.contains(token)) {
+                    this.tokenUniverse.add(token);
+                }
+            }
+        }
+        this.tokenMatrix = new boolean[this.tokenUniverse.size()][table.getData().size()];
+        for (Record r : table.getData()) {
+            String recordString = r.toString();
+            for (int i = 0; i <= recordString.length() - tokenSize; i++) {
+                String token = recordString.substring(i, i + tokenSize);
+                this.tokenMatrix[this.tokenUniverse.indexOf(token)][table.getData().indexOf(r)] = true;
+            }
 
-
+        }
         // END SOLUTION
     }
 
     /**
-     * Calculates {@link LSHDetection#signatureMatrix}: a matrix with {@link LSHDetection#numMinHashs} many rows
-     * and as many columns as there are records in the table.
-     * An integer value k at cell (i,j) says that for the i-th permutation of the {@link LSHDetection#tokenMatrix}
-     * and for the j-th record in the table, a token of record j is at row k and rows 0 to k-1 have no tokens of record j.
+     * Calculates {@link LSHDetection#signatureMatrix}: a matrix with
+     * {@link LSHDetection#numMinHashs} many rows and as many columns as there
+     * are records in the table. An integer value k at cell (i,j) says that for
+     * the i-th permutation of the {@link LSHDetection#tokenMatrix} and for the
+     * j-th record in the table, a token of record j is at row k and rows 0 to
+     * k-1 have no tokens of record j.
+     *
      * @param table Table used to calculate min hashes
      */
     private void calculateMinHashes(Table table) {
         // BEGIN SOLUTION
+        this.signatureMatrix = new int[this.numMinHashs][table.getData().size()];
+        for (Record j : table.getData()) {
 
+            //write all token "true" token indexes of current record in list
+            List<Integer> tokenIndexes = new ArrayList<>();
+            for (int k = 0; k < this.numMinHashs; k++) {
+                if (this.tokenMatrix[k][table.getData().indexOf(j)]) {
+                    tokenIndexes.add(k);
+                }
 
+            }
 
+            //calc lowest token index
+            int lowest = Integer.MAX_VALUE;
+            for (int k : tokenIndexes) {
+                if (k < lowest) {
+                    lowest = k;
+                }
+            }
+
+            //set lowest token index to first row in signature matrix
+            this.signatureMatrix[0][table.getData().indexOf(j)] = lowest;
+            tokenIndexes.remove(Integer.valueOf(lowest));
+
+            //shuffle tokenindexes
+            Helper helper = new Helper();
+            helper.shuffleMatrixRows(this.tokenMatrix);
+
+            //repeat numMinHashs times: calculate lowest token index in tokenIndexes and set it to the next row in signature matrix
+            for (int k : tokenIndexes) {
+                int nextLowest = Integer.MAX_VALUE;
+                for (int l : tokenIndexes) {
+                    if (l < nextLowest) {
+                        nextLowest = l;
+                    }
+                }
+                this.signatureMatrix[k][table.getData().indexOf(j)] = nextLowest;
+            }
+        }
+
+        String s = "";
+        for (int i = 0; i < this.signatureMatrix.length; i++) {
+            for (int j = 0; j < this.signatureMatrix[i].length; j++) {
+                s += this.signatureMatrix[i][j] + " ";
+            }
+            s += "\n";
+        }
+        System.out.println(s);
         // END SOLUTION
     }
 
@@ -81,22 +154,28 @@ public class LSHDetection implements DuplicateDetection {
     }
 
     /**
-     * Calculates a hashtable for every band and adds it to {@link LSHDetection#LSH}. Uses {@link LSHDetection#hash(int[])}
-     * to hash a band to an integer. For every hash value we store a list of record ids, these lists represent
-     * buckets of duplicate candidates.
+     * Calculates a hashtable for every band and adds it to
+     * {@link LSHDetection#LSH}. Uses {@link LSHDetection#hash(int[])} to hash a
+     * band to an integer. For every hash value we store a list of record ids,
+     * these lists represent buckets of duplicate candidates.
      */
     private void calculateHashBuckets() {
         // BEGIN SOLUTION
+        for (int i = 0; i < this.signatureMatrix.length; i++) {
+            for (int j = 0; j < this.signatureMatrix[i].length; j++) {
+                int signature = this.signatureMatrix[i][j];
 
-
+            }
+        }
 
         // END SOLUTION
     }
 
     /**
-     * First calculates tokens, minHashes and hash buckets.
-     * Then iterates over all hashtables in {@link LSHDetection#LSH} and over all hash keys to compare all records
-     * who share at least one hash bucket.
+     * First calculates tokens, minHashes and hash buckets. Then iterates over
+     * all hashtables in {@link LSHDetection#LSH} and over all hash keys to
+     * compare all records who share at least one hash bucket.
+     *
      * @param table Table to check for duplicates
      * @param recSim Similarity measure to use for comparing two records
      * @return Set of detected duplicates
@@ -107,13 +186,11 @@ public class LSHDetection implements DuplicateDetection {
         int numComparisons = 0;
         calculateTokens(table);
         calculateMinHashes(table);
-        calculateHashBuckets();
+        //calculateHashBuckets();
         // BEGIN SOLUTION
 
-
-
         // END SOLUTION
-        System.out.printf("LSH Detection found %d duplicates after %d comparisons%n", duplicates.size(), numComparisons);
+        //System.out.printf("LSH Detection found %d duplicates after %d comparisons%n", duplicates.size(), numComparisons);
         return duplicates;
     }
 }
