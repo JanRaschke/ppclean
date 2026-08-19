@@ -29,25 +29,19 @@ public class Levenshtein implements StringSimilarity {
         for (int i = 0; i < n + 1; i++) {
             matrix[0][i] = i;
         }
-        for (int i = 0; i < m + 1; i++) {
-            for (int j = 0; j < n + 1; j++) {
-                if (x.charAt(i) == y.charAt(j)) {
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (x.charAt(i - 1) == y.charAt(j - 1)) {
                     matrix[i][j] = matrix[i - 1][j - 1];
                 } else {
-                    matrix[i][j] = 1 + Math.min(compare(x.substring(0, m - 1), y.substring(0, n - 1)),)
+                    matrix[i][j] = 1 + Math.min(matrix[i - 1][j], Math.min(matrix[i][j - 1], matrix[i - 1][j - 1]));
                 }
 
             }
         }
-        //build visual table for understanding
-        String s = "";
-        for (int i = 0; i < m + 1; i++) {
-            for (int j = 0; j < n + 1; j++) {
-                s += matrix[i][j] + " ";
-            }
-            s += "\n";
-        }
-        System.out.println("hallo" + "\n" + s);
+
+        res = 1 - (double) matrix[m][n] / (double) Math.max(n, m);
+
         // END SOLUTION
         return res;
     }

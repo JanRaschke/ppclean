@@ -17,6 +17,6 @@ public class PPClean {
         // Hier könnt ihr nach Belieben rumexperimentieren
         // Zum Bestehen wichtig sind lediglich die Tests
         Levenshtein lev = new Levenshtein();
-        System.out.println(lev.compare("hallo", "hallow"));
+        System.out.println(lev.compare("hello", "hallow"));
     }
 }
