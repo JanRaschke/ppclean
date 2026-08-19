@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="de.clean.Task1" time="0.024" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="de.clean.Task2" time="0.014" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="25"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,9 +12,9 @@
     <property name="user.country" value="DE"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/janphilip/htdocs/projects/ppclean/target/surefire/surefirebooter-20260819100333405_3.jar /Users/janphilip/htdocs/projects/ppclean/target/surefire 2026-08-19T10-03-33_362-jvmRun1 surefire-20260819100333405_1tmp surefire_0-20260819100333405_2tmp"/>
+    <property name="sun.java.command" value="/Users/janphilip/htdocs/projects/ppclean/target/surefire/surefirebooter-20260819102006899_3.jar /Users/janphilip/htdocs/projects/ppclean/target/surefire 2026-08-19T10-20-06_864-jvmRun1 surefire-20260819102006899_1tmp surefire_0-20260819102006899_2tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="test" value="de.clean.Task1#testSingleAttributeEquality"/>
+    <property name="test" value="de.clean.Task2"/>
     <property name="surefire.test.class.path" value="/Users/janphilip/htdocs/projects/ppclean/target/test-classes:/Users/janphilip/htdocs/projects/ppclean/target/classes:/Users/janphilip/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.3/junit-jupiter-api-5.11.3.jar:/Users/janphilip/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/janphilip/.m2/repository/org/junit/platform/junit-platform-commons/1.11.3/junit-platform-commons-1.11.3.jar:/Users/janphilip/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="/Users/janphilip"/>
@@ -29,7 +29,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/janphilip/htdocs/projects/ppclean/target/surefire/surefirebooter-20260819100333405_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/janphilip/htdocs/projects/ppclean/target/surefire/surefirebooter-20260819102006899_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="25+36-LTS"/>
     <property name="user.name" value="janphilip"/>
@@ -58,13 +58,12 @@
     <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
     <property name="java.class.version" value="69.0"/>
   </properties>
-  <testcase name="testSingleAttributeEquality" classname="de.clean.Task1" time="0.008">
-    <system-out><![CDATA[[Task1: testSingleAttributeEquality]
-Creating SingleAttributeEquality for name comparison (attributeIndex: 1)...
-Comparing first four records with respect to their name attribute...
-Comparing first and second record: Expecting 1 (equality)
-Comparing second and third record: Expecting 0 (inequality)
-Comparing third and fourth record: Expecting 0 (inequality)
+  <testcase name="testJaccardSimilarity" classname="de.clean.Task2" time="0.007">
+    <system-out><![CDATA[[Task2: testJaccardSimilarity]
+Comparing 'morning' with 'evening': Expected Jaccard is 0.375
+Comparing 'Data Integration' with 'Distributed Data Management': Expected Jaccard is 0.176
+Comparing 'Hallo Welt' with 'Hallo Marburg': Expected Jaccard is 0.266
+Comparing a duplicate: Expected Jaccard is 1
 ]]></system-out>
   </testcase>
 </testsuite>
