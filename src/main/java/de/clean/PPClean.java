@@ -1,12 +1,14 @@
 package de.clean;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import de.clean.data.Duplicate;
 import de.clean.data.Table;
 import de.clean.data.TableFactory;
 import de.clean.performance.Performance;
-import de.clean.similarity.Levenshtein;
+import de.clean.similarity.Hybrid;
 
 public class PPClean {
 
@@ -16,7 +18,9 @@ public class PPClean {
         Performance performance = Performance.initInstance(groundTruth);
         // Hier könnt ihr nach Belieben rumexperimentieren
         // Zum Bestehen wichtig sind lediglich die Tests
-        Levenshtein lev = new Levenshtein();
-        System.out.println(lev.compare("hello", "hallow"));
+
+        List<String> policies = Arrays.asList(null, "L", "L", "J", "L", "J");
+        Hybrid hybrid = new Hybrid(policies);
+        System.out.println(hybrid.compare(inputTable.getData().get(0), inputTable.getData().get(1)) + "");
     }
 }
