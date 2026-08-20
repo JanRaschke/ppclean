@@ -98,4 +98,50 @@ public class Helper {
             }
         }
     }
+
+    /**
+     * Calculates the transitive closure of a set of Duplicates.
+     * If (A, B) and (B, C) are in duplicates, then (A, C) is also added.
+     * @param duplicates Initial set of detected duplicates
+     * @return Transitively expanded set of duplicates
+     */
+    public static Set<Duplicate> computeTransitiveClosure(Set<Duplicate> duplicates) {
+        java.util.Map<Record, Set<Record>> adj = new java.util.HashMap<>();
+        for (Duplicate d : duplicates) {
+            Record r1 = d.getRecord1();
+            Record r2 = d.getRecord2();
+            adj.computeIfAbsent(r1, k -> new HashSet<>()).add(r2);
+            adj.computeIfAbsent(r2, k -> new HashSet<>()).add(r1);
+        }
+
+        Set<Duplicate> closure = new HashSet<>();
+        Set<Record> visited = new HashSet<>();
+
+        for (Record start : adj.keySet()) {
+            if (!visited.contains(start)) {
+                List<Record> component = new java.util.ArrayList<>();
+                java.util.Queue<Record> queue = new java.util.LinkedList<>();
+                queue.add(start);
+                visited.add(start);
+
+                while (!queue.isEmpty()) {
+                    Record curr = queue.poll();
+                    component.add(curr);
+                    for (Record neighbor : adj.getOrDefault(curr, java.util.Collections.emptySet())) {
+                        if (!visited.contains(neighbor)) {
+                            visited.add(neighbor);
+                            queue.add(neighbor);
+                        }
+                    }
+                }
+
+                for (int i = 0; i < component.size(); i++) {
+                    for (int j = i + 1; j < component.size(); j++) {
+                        closure.add(new Duplicate(component.get(i), component.get(j)));
+                    }
+                }
+            }
+        }
+        return closure;
+    }
 }
